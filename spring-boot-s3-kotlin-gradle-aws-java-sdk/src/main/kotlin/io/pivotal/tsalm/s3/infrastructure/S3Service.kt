@@ -1,35 +1,42 @@
 package io.pivotal.tsalm.s3.infrastructure
 
-import com.amazonaws.services.s3.AmazonS3
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Repository
+import software.amazon.awssdk.core.sync.RequestBody
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.*
 import java.util.*
 
 @Repository
-class S3Service(private val s3Client: AmazonS3) {
+class S3Service(private val s3Client: S3Client) {
 
     @Throws(S3KeyDoesNotExistException::class)
     fun getObject(bucketName: String, key: String): Resource {
-        if (s3Client.doesObjectExist(bucketName, key)) {
-            val bucketObject = s3Client.getObject(bucketName, key)
-            return InputStreamResource(bucketObject.objectContent)
+        val request = GetObjectRequest.builder().bucket(bucketName).key(key).build()
+        try {
+            val responseInputStream = s3Client.getObject(request)
+            return InputStreamResource(responseInputStream)
+        } catch (exception: NoSuchKeyException) {
+            throw S3KeyDoesNotExistException(bucketName, key)
         }
-        throw S3KeyDoesNotExistException(bucketName, key)
     }
 
     fun putObject(bucketName: String, resource: Resource): String {
         val key = resource.filename ?: UUID.randomUUID().toString()
-        s3Client.putObject(bucketName, key, resource.inputStream, null)
+        val request = PutObjectRequest.builder().bucket(bucketName).key(key).build()
+        val requestBody = RequestBody.fromInputStream(resource.inputStream, resource.contentLength())
+        s3Client.putObject(request, requestBody)
         return key
     }
 
     @Throws(S3KeyDoesNotExistException::class)
     fun removeObject(bucketName: String, key: String) {
-        if (s3Client.doesObjectExist(bucketName, key)) {
-            s3Client.deleteObject(bucketName, key)
-        } else {
+        try {
+            s3Client.headObject(HeadObjectRequest.builder().bucket(bucketName).key(key).build())
+        } catch (exception: NoSuchKeyException) {
             throw S3KeyDoesNotExistException(bucketName, key)
         }
+        s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(key).build())
     }
 }

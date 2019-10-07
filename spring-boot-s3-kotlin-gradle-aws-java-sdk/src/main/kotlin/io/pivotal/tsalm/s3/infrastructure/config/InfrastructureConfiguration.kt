@@ -1,33 +1,25 @@
 package io.pivotal.tsalm.s3.infrastructure.config
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.AmazonS3Client
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
+import java.net.URI
 
 @Configuration
-class InfrastructureConfiguration {
-
-    @Value("\${s3Properties.endpointUrl}")
-    private val endpointUrl: String? = null
-    @Value("\${s3Properties.region}")
-    private val region: String? = null
-    @Value("\${s3Properties.accessKey}")
-    private val accessKey: String? = null
-    @Value("\${s3Properties.secretKey}")
-    private val secretKey: String? = null
+class InfrastructureConfiguration(private val s3ConfigurationProperties: S3ConfigurationProperties) {
 
     @Bean
-    fun amazonS3Client(): AmazonS3 {
-        val credentialsProvider = AWSStaticCredentialsProvider(BasicAWSCredentials(accessKey, secretKey))
-        return AmazonS3Client.builder()
-                .withCredentials(credentialsProvider)
-                .withEndpointConfiguration(EndpointConfiguration(endpointUrl, region))
+    fun s3Client(): S3Client {
+        val credentials = AwsBasicCredentials.create(s3ConfigurationProperties.accessKey,
+                s3ConfigurationProperties.secretKey)
+        val credentialsProvider = StaticCredentialsProvider.create(credentials)
+        return S3Client.builder()
+                .credentialsProvider(credentialsProvider)
+                .endpointOverride(URI.create(s3ConfigurationProperties.endpointUrl))
+                .region(Region.of(s3ConfigurationProperties.region))
                 .build()
     }
 }
