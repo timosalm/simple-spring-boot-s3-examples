@@ -1,0 +1,5 @@
+s3Properties:
+  endpointUrl: https://s3.eu-central-1.amazonaws.com
+  region: eu-central-1
+  accessKey: YOUR_ACCESS_KEY
+  secretKey: YOUR_SECRET_KEY
