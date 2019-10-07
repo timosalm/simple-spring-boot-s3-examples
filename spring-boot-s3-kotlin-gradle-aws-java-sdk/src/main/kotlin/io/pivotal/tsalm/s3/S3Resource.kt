@@ -2,7 +2,7 @@ package io.pivotal.tsalm.s3
 
 
 import io.pivotal.tsalm.s3.infrastructure.S3KeyDoesNotExistException
-import io.pivotal.tsalm.s3.infrastructure.S3Repository
+import io.pivotal.tsalm.s3.infrastructure.S3Service
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -13,7 +13,7 @@ import java.net.URI
 
 @RestController
 @RequestMapping(S3Resource.BASE_URI)
-class S3Resource(private val repository: S3Repository) {
+class S3Resource(private val service: S3Service) {
 
     companion object {
         const val BASE_URI = "/api/v1/buckets"
@@ -22,7 +22,7 @@ class S3Resource(private val repository: S3Repository) {
     @GetMapping("/{bucketName}/objects/{objectKey}")
     fun downloadS3Object(@PathVariable bucketName: String, @PathVariable objectKey: String): ResponseEntity<Resource> {
         return try {
-            val s3Object = repository.getObject(bucketName, objectKey)
+            val s3Object = service.getObject(bucketName, objectKey)
             ResponseEntity.ok(s3Object)
         } catch (exception: S3KeyDoesNotExistException) {
             ResponseEntity.notFound().build()
@@ -32,14 +32,14 @@ class S3Resource(private val repository: S3Repository) {
     @PostMapping("/{bucketName}/objects", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun uploadS3Object(@PathVariable bucketName: String, request: MultipartHttpServletRequest): ResponseEntity<Void> {
         val multipartFile = request.multiFileMap.toSingleValueMap().values.first()
-        val objectKey = repository.putObject(bucketName, multipartFile.resource)
-        return ResponseEntity.created(URI("$BASE_URI/objects/$objectKey")).build()
+        val objectKey = service.putObject(bucketName, multipartFile.resource)
+        return ResponseEntity.created(URI("$BASE_URI/$bucketName/objects/$objectKey")).build()
     }
 
     @DeleteMapping("/{bucketName}/objects/{objectKey}")
     fun removeObject(@PathVariable bucketName: String, @PathVariable objectKey: String): ResponseEntity<Void> {
         return try {
-            repository.removeObject(bucketName, objectKey)
+            service.removeObject(bucketName, objectKey)
             return ResponseEntity.noContent().build()
         } catch (exception: S3KeyDoesNotExistException) {
             ResponseEntity.notFound().build()

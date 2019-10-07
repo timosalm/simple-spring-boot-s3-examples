@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-class S3Repository(private val s3Client: AmazonS3) {
+class S3Service(private val s3Client: AmazonS3) {
 
     @Throws(S3KeyDoesNotExistException::class)
-    fun getObject(bucketName: String, key: String): InputStreamResource {
+    fun getObject(bucketName: String, key: String): Resource {
         if (s3Client.doesObjectExist(bucketName, key)) {
             val bucketObject = s3Client.getObject(bucketName, key)
             return InputStreamResource(bucketObject.objectContent)

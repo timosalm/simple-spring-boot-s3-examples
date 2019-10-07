@@ -2,13 +2,12 @@ package io.pivotal.tsalm.s3.infrastructure.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.regions.Regions
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration as EndpointConfiguration1
 
 
 @Configuration
@@ -28,7 +27,7 @@ class InfrastructureConfiguration {
         val credentialsProvider = AWSStaticCredentialsProvider(BasicAWSCredentials(accessKey, secretKey))
         return AmazonS3Client.builder()
                 .withCredentials(credentialsProvider)
-                .withEndpointConfiguration(EndpointConfiguration1(endpointUrl, region))
+                .withEndpointConfiguration(EndpointConfiguration(endpointUrl, region))
                 .build()
     }
 }
