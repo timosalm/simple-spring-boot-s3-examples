@@ -1,1 +1,8 @@
-
+cloud.aws:
+  credentials:
+    accessKey: YOUR_ACCESS_KEY
+    secretKey: YOUR_SECRET_KEY
+  region:
+    static: eu-central-1
+  stack:
+    auto: false

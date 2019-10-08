@@ -5,9 +5,10 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.core.io.WritableResource
 import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import java.util.*
 
-@Repository
+@Service
 class S3Service(private val resourceLoader: ResourceLoader, private val amazonS3: AmazonS3) {
 
     @Throws(S3KeyDoesNotExistException::class)
