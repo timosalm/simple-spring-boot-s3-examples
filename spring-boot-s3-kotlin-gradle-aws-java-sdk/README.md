@@ -44,13 +44,13 @@ The compatibility was tested with Google Cloud Storage. See https://cloud.google
     $ git clone https://github.com/tsalm-pivotal/simple-spring-boot-s3-examples
     $ cd simple-spring-boot-s3-examples/spring-boot-s3-kotlin-gradle-aws-java-sdk
     ```
-2. Open the application.yml file in src/main/resources and replace the placeholder values with those appropriate for your environment.
+2. Open the manifest.yml file and replace the placeholder values with those appropriate for your environment.
     ```
-    s3Properties:
-      endpointUrl: https://s3.eu-central-1.amazonaws.com
-      region: eu-central-1
-      accessKey: YOUR_ACCESS_KEY
-      secretKey: YOUR_SECRET_KEY
+    ...
+    S3PROPERTIES_ENDPOINTURL: https://s3.eu-central-1.amazonaws.com
+    S3PROPERTIES_REGION: eu-central-1
+    S3PROPERTIES_ACCESSKEY: YOUR_ACCESS_KEY
+    S3PROPERTIES_SECRETKEY: YOUR_SECRET_KEY
     ```
 3. After installing the 'cf' [command-line interface for Cloud Foundry](http://docs.cloudfoundry.org/cf-cli/), targeting a Cloud Foundry instance, and logging in, the application can be built and pushed using these commands:
 

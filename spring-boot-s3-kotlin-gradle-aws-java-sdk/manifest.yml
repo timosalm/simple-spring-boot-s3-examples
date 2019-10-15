@@ -6,3 +6,7 @@ applications:
   path: build/libs/s3-0.0.1-SNAPSHOT.jar
   env:
     JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ }}'
+    S3PROPERTIES_ENDPOINTURL: https://s3.eu-central-1.amazonaws.com
+    S3PROPERTIES_REGION: eu-central-1
+    S3PROPERTIES_ACCESSKEY: YOUR_ACCESS_KEY
+    S3PROPERTIES_SECRETKEY: YOUR_SECRET_KEY

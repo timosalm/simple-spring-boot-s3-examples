@@ -6,3 +6,7 @@ applications:
   path: build/libs/s3-0.0.1-SNAPSHOT.jar
   env:
     JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ }}'
+    CLOUD_AWS_CREDENTIALS_ACCESSKEY: YOUR_ACCESS_KEY
+    CLOUD_AWS_CREDENTIALS_SECRETKEY: YOUR_SECRET_KEY
+    CLOUD_AWS_REGION_STATIC: eu-central-1
+    CLOUD_AWS_STACK_AUTO: false
