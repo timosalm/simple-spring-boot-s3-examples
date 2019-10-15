@@ -37,3 +37,37 @@ The compatibility was tested with Google Cloud Storage. See https://cloud.google
         ```
             $curl -X "DELETE" http://localhost:8080/api/v1/buckets/YOUR_BUCKET_NAME/objects/FILE.txt -v
         ```
+
+## Running the application on Cloud Foundry
+1. Clone the repository and move to the project folder.
+    ```
+    $ git clone https://github.com/tsalm-pivotal/simple-spring-boot-s3-examples
+    $ cd simple-spring-boot-s3-examples/spring-boot-s3-kotlin-gradle-aws-java-sdk
+    ```
+2. Open the application.yml file in src/main/resources and replace the placeholder values with those appropriate for your environment.
+    ```
+    s3Properties:
+      endpointUrl: https://s3.eu-central-1.amazonaws.com
+      region: eu-central-1
+      accessKey: YOUR_ACCESS_KEY
+      secretKey: YOUR_SECRET_KEY
+    ```
+3. After installing the 'cf' [command-line interface for Cloud Foundry](http://docs.cloudfoundry.org/cf-cli/), targeting a Cloud Foundry instance, and logging in, the application can be built and pushed using these commands:
+
+    ```
+    $ ./gradlew bootJar
+    $ cf push
+    ```
+4. Call the API.
+    - Upload a file to an existing bucket in the configured region:
+        ```
+            $curl -F "data=@/YOUR/PATH/TO/FILE.txt"  https://YOUR-APP-URL/api/v1/buckets/YOUR_BUCKET_NAME/objects -v
+        ```
+    - Download an existing file from a bucket in the configured region:
+        ```
+            $curl -O https://YOUR-APP-URL/api/v1/buckets/YOUR_BUCKET_NAME/objects/FILE.txt -v
+        ```
+    - Delete an existing file from a bucket in the configured region:
+        ```
+            $curl -X "DELETE" https://YOUR-APP-URL/api/v1/buckets/YOUR_BUCKET_NAME/objects/FILE.txt -v
+        ```
